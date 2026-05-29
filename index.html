@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carta</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --naranja: #ff9f43;
+      --naranja-claro: #ffc46b;
+      --papel: #f8ead0;
+      --papel-oscuro: #e5c394;
+      --tinta: #34231c;
+      --verde: #536b49;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255, 170, 80, 0.28), transparent 30%),
+        radial-gradient(circle at 82% 16%, rgba(132, 39, 62, 0.35), transparent 34%),
+        radial-gradient(circle at 50% 95%, rgba(255, 204, 130, 0.20), transparent 42%),
+        linear-gradient(135deg, #121826, #283441 52%, #191923);
+      font-family: "Cormorant Garamond", serif;
+      color: var(--tinta);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      mask-image: radial-gradient(circle, black 48%, transparent 92%);
+      pointer-events: none;
+    }
+
+    .light {
+      position: fixed;
+      width: 70vmax;
+      height: 70vmax;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 159, 67, 0.24), transparent 68%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .heart-rain {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .rain-heart {
+      position: absolute;
+      top: -40px;
+      color: var(--naranja);
+      font-size: 22px;
+      text-shadow:
+        0 0 10px rgba(255, 159, 67, 0.65),
+        0 0 22px rgba(255, 196, 107, 0.35);
+      animation: fall linear infinite;
+      opacity: 0.85;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-50px) rotate(0deg) scale(0.7);
+        opacity: 0;
+      }
+
+      12% {
+        opacity: 0.95;
+      }
+
+      100% {
+        transform: translateY(110vh) rotate(360deg) scale(1.1);
+        opacity: 0;
+      }
+    }
+
+    .scene {
+      position: relative;
+      z-index: 5;
+      width: min(94vw, 900px);
+      height: min(92vh, 720px);
+      display: grid;
+      place-items: center;
+      perspective: 1400px;
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      transform-style: preserve-3d;
+    }
+
+    .letter {
+      position: absolute;
+      width: min(760px, 92vw);
+      min-height: 540px;
+      opacity: 0;
+      transform: translateY(130px) scale(0.72) rotateX(18deg);
+      transition: opacity 850ms ease, transform 950ms cubic-bezier(.18,.82,.22,1);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .stage.open .letter {
+      opacity: 1;
+      transform: translateY(-35px) scale(1) rotateX(0);
+      z-index: 10;
+      pointer-events: auto;
+    }
+
+    .paper {
+      position: relative;
+      min-height: 545px;
+      padding: clamp(34px, 7vw, 76px);
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,0.68), transparent 25%),
+        radial-gradient(circle at 92% 88%, rgba(255, 159, 67, 0.18), transparent 35%),
+        linear-gradient(135deg, #fff7e7, var(--papel) 52%, var(--papel-oscuro));
+      box-shadow:
+        0 35px 85px rgba(0,0,0,0.42),
+        inset 0 0 0 1px rgba(95,55,30,0.16),
+        inset 0 0 55px rgba(113,71,36,0.12);
+      overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform;
+      cursor: pointer;
+    }
+
+    .paper::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(82,52,31,0.035) 0 1px, transparent 1px 7px),
+        repeating-linear-gradient(90deg, rgba(82,52,31,0.025) 0 1px, transparent 1px 9px);
+      pointer-events: none;
+    }
+
+    .paper::after {
+      content: "";
+      position: absolute;
+      inset: 22px;
+      border-radius: 27px;
+      border: 1px solid rgba(255, 159, 67, 0.38);
+      box-shadow: inset 0 0 0 1px rgba(216,170,92,0.18);
+      pointer-events: none;
+    }
+
+    .paper.love {
+      animation: lovePulse 520ms ease;
+    }
+
+    @keyframes lovePulse {
+      0% {
+        transform: scale(1);
+      }
+
+      45% {
+        transform: scale(1.025);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .gold-frame {
+      position: absolute;
+      inset: 38px;
+      border-radius: 22px;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent, rgba(255,159,67,0.55), transparent) top / 100% 1px no-repeat,
+        linear-gradient(90deg, transparent, rgba(255,159,67,0.45), transparent) bottom / 100% 1px no-repeat,
+        linear-gradient(180deg, transparent, rgba(255,159,67,0.45), transparent) left / 1px 100% no-repeat,
+        linear-gradient(180deg, transparent, rgba(255,159,67,0.45), transparent) right / 1px 100% no-repeat;
+      z-index: 3;
+    }
+
+    .heart-bg {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(-8deg);
+      font-size: 14rem;
+      color: rgba(255, 159, 67, 0.13);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .message {
+      position: relative;
+      z-index: 5;
+      min-height: 390px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 12px;
+    }
+
+    .message p {
+      max-width: 610px;
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      line-height: 1.05;
+      font-weight: 700;
+      color: var(--tinta);
+      text-wrap: balance;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,0.65),
+        0 10px 30px rgba(255, 159, 67, 0.18);
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 900ms ease 600ms, transform 900ms ease 600ms;
+    }
+
+    .stage.open .message p {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .adorable-gif {
+      width: min(260px, 62vw);
+      max-width: 100%;
+      margin-top: 22px;
+      border-radius: 28px;
+      filter:
+        drop-shadow(0 18px 28px rgba(255, 159, 67, 0.28))
+        drop-shadow(0 6px 12px rgba(80, 45, 20, 0.18));
+      opacity: 0;
+      transform: translateY(18px) scale(0.92);
+      transition: opacity 900ms ease 850ms, transform 900ms ease 850ms;
+      pointer-events: none;
+    }
+
+    .stage.open .adorable-gif {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .lavender {
+      position: absolute;
+      left: 38px;
+      bottom: 28px;
+      width: 88px;
+      height: 190px;
+      transform: rotate(-24deg);
+      opacity: 0.72;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .stem {
+      position: absolute;
+      left: 43px;
+      bottom: 0;
+      width: 4px;
+      height: 170px;
+      border-radius: 99px;
+      background: linear-gradient(var(--verde), #273520);
+    }
+
+    .bud {
+      position: absolute;
+      width: 15px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffb067, #f07828);
+    }
+
+    .bud:nth-child(2) { left: 28px; top: 2px; }
+    .bud:nth-child(3) { left: 48px; top: 17px; }
+    .bud:nth-child(4) { left: 29px; top: 35px; }
+    .bud:nth-child(5) { left: 50px; top: 55px; }
+    .bud:nth-child(6) { left: 31px; top: 76px; }
+
+    .wax-mini {
+      position: absolute;
+      right: 48px;
+      bottom: 42px;
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 32% 24%, rgba(255,255,255,0.25), transparent 18%),
+        linear-gradient(145deg, #ff9f43, #b95513);
+      box-shadow:
+        0 12px 24px rgba(125, 62, 10, 0.3),
+        inset 0 8px 12px rgba(255,220,170,0.18),
+        inset 0 -9px 14px rgba(82,34,5,0.34);
+      display: grid;
+      place-items: center;
+      color: rgba(255,248,230,0.95);
+      font-family: "Great Vibes", cursive;
+      font-size: 2.5rem;
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    .envelope {
+      position: absolute;
+      bottom: 95px;
+      width: min(550px, 88vw);
+      height: 330px;
+      transform-style: preserve-3d;
+      z-index: 8;
+      transition: transform 900ms ease, opacity 900ms ease;
+      animation: envelopeFloat 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes envelopeFloat {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-9px);
+      }
+    }
+
+    .stage.open .envelope {
+      animation: none;
+      transform: translateY(130px) scale(0.86);
+      opacity: 0.55;
+    }
+
+    .env-back,
+    .env-flap,
+    .env-front,
+    .env-left,
+    .env-right {
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .env-back {
+      background:
+        radial-gradient(circle at 20% 25%, rgba(255,255,255,0.35), transparent 23%),
+        linear-gradient(135deg, #f3d6a7, #d89452 52%, #f7dfb8);
+      box-shadow: 0 38px 80px rgba(0,0,0,0.42);
+    }
+
+    .env-back::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(45deg, rgba(255,159,67,0.13) 0 3px, transparent 3px 15px);
+    }
+
+    .env-flap {
+      clip-path: polygon(0 0, 100% 0, 50% 68%);
+      transform-origin: top;
+      background: linear-gradient(155deg, #ffe4b7, #db8845);
+      z-index: 8;
+      transition: transform 950ms cubic-bezier(.19,.89,.28,1);
+    }
+
+    .stage.open .env-flap {
+      transform: rotateX(178deg);
+    }
+
+    .env-front {
+      clip-path: polygon(0 36%, 50% 75%, 100% 36%, 100% 100%, 0 100%);
+      background: linear-gradient(135deg, #dc9a5f, #f6dfb8 56%, #d1864a);
+      z-index: 9;
+    }
+
+    .env-left {
+      clip-path: polygon(0 36%, 50% 75%, 0 100%);
+      background: linear-gradient(145deg, #cf7c3a, #e8bc89);
+      z-index: 10;
+    }
+
+    .env-right {
+      clip-path: polygon(100% 36%, 50% 75%, 100% 100%);
+      background: linear-gradient(215deg, #c96f34, #f0ca99);
+      z-index: 10;
+    }
+
+    .seal {
+      position: absolute;
+      left: 50%;
+      top: 62%;
+      width: 88px;
+      height: 88px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 34% 26%, rgba(255,255,255,0.28), transparent 17%),
+        linear-gradient(145deg, #ff9f43, #b95513);
+      box-shadow:
+        0 13px 24px rgba(125, 62, 10, 0.34),
+        inset 0 9px 13px rgba(255,220,170,0.18),
+        inset 0 -9px 15px rgba(82,34,5,0.34);
+      z-index: 12;
+      display: grid;
+      place-items: center;
+      color: rgba(255,248,230,0.95);
+      font-family: "Great Vibes", cursive;
+      font-size: 2.9rem;
+      transition: transform 700ms ease, opacity 700ms ease;
+      pointer-events: none;
+    }
+
+    .stage.open .seal {
+      transform: translate(-50%, -50%) scale(0.45) rotate(-28deg);
+      opacity: 0;
+    }
+
+    .open-btn {
+      position: absolute;
+      left: 50%;
+      bottom: 42px;
+      transform: translateX(-50%);
+      z-index: 60;
+      border: 1px solid rgba(255,238,207,0.55);
+      background: linear-gradient(135deg, #ffad4f, #c76018);
+      color: white;
+      padding: 15px 38px;
+      border-radius: 999px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      box-shadow: 0 18px 38px rgba(0,0,0,0.36);
+      transition: transform 220ms ease, filter 220ms ease, opacity 500ms ease;
+      pointer-events: auto;
+    }
+
+    .open-btn:hover {
+      transform: translateX(-50%) translateY(-3px);
+      filter: brightness(1.08);
+    }
+
+    .stage.open .open-btn {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .click-heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 100;
+      color: var(--naranja);
+      font-size: 26px;
+      animation: heartUp 1000ms ease forwards;
+      text-shadow: 0 8px 20px rgba(255, 159, 67, 0.45);
+    }
+
+    @keyframes heartUp {
+      to {
+        transform: translate(var(--x), -120px) scale(1.35);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .scene {
+        height: 100vh;
+      }
+
+      .letter {
+        width: 93vw;
+      }
+
+      .paper {
+        min-height: 590px;
+        padding: 34px 24px;
+        border-radius: 28px;
+      }
+
+      .message {
+        min-height: 430px;
+      }
+
+      .message p {
+        font-size: clamp(2.5rem, 12vw, 4.1rem);
+      }
+
+      .adorable-gif {
+        width: min(230px, 70vw);
+        margin-top: 18px;
+      }
+
+      .lavender {
+        opacity: 0.24;
+        left: 18px;
+      }
+
+      .wax-mini {
+        width: 62px;
+        height: 62px;
+        font-size: 2rem;
+        right: 28px;
+        bottom: 26px;
+      }
+
+      .envelope {
+        height: 255px;
+        bottom: 110px;
+      }
+
+      .open-btn {
+        bottom: 34px;
+        padding: 13px 30px;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="light"></div>
+  <div class="heart-rain" id="heartRain"></div>
+
+  <main class="scene">
+    <section class="stage" id="stage">
+      <article class="letter">
+        <div class="paper" id="paper">
+          <div class="gold-frame"></div>
+          <div class="heart-bg">♡</div>
+
+          <div class="lavender">
+            <div class="stem"></div>
+            <div class="bud"></div>
+            <div class="bud"></div>
+            <div class="bud"></div>
+            <div class="bud"></div>
+            <div class="bud"></div>
+          </div>
+
+          <div class="message">
+            <div>
+              <p>Amo como sos te quiero mucho mi niña</p>
+              <img class="adorable-gif" src="Adorable.gif" alt="Adorable">
+            </div>
+          </div>
+
+          <div class="wax-mini">G</div>
+        </div>
+      </article>
+
+      <div class="envelope">
+        <div class="env-back"></div>
+        <div class="env-flap"></div>
+        <div class="env-front"></div>
+        <div class="env-left"></div>
+        <div class="env-right"></div>
+        <div class="seal">G</div>
+      </div>
+
+      <button class="open-btn" id="openBtn">Abrir carta</button>
+    </section>
+  </main>
+
+  <script>
+    const stage = document.getElementById("stage");
+    const openBtn = document.getElementById("openBtn");
+    const paper = document.getElementById("paper");
+    const heartRain = document.getElementById("heartRain");
+
+    let opened = false;
+    let mouseX = 0;
+    let mouseY = 0;
+    let ticking = false;
+
+    function crearLluviaCorazones() {
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 0; i < 34; i++) {
+        const heart = document.createElement("span");
+        heart.className = "rain-heart";
+        heart.textContent = Math.random() > 0.5 ? "❤" : "♡";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = 6 + Math.random() * 7 + "s";
+        heart.style.animationDelay = Math.random() * 6 + "s";
+        heart.style.fontSize = 15 + Math.random() * 18 + "px";
+        fragment.appendChild(heart);
+      }
+
+      heartRain.appendChild(fragment);
+    }
+
+    function corazonesClick(x, y, cantidad) {
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 0; i < cantidad; i++) {
+        const heart = document.createElement("span");
+        heart.className = "click-heart";
+        heart.textContent = Math.random() > 0.5 ? "❤" : "♡";
+        heart.style.left = x + "px";
+        heart.style.top = y + "px";
+        heart.style.setProperty("--x", `${Math.random() * 130 - 65}px`);
+        fragment.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 1000);
+      }
+
+      document.body.appendChild(fragment);
+    }
+
+    openBtn.addEventListener("click", e => {
+      if (opened) return;
+
+      opened = true;
+      stage.classList.add("open");
+      corazonesClick(e.clientX, e.clientY, 12);
+    });
+
+    paper.addEventListener("click", e => {
+      if (!opened) return;
+
+      paper.classList.remove("love");
+      void paper.offsetWidth;
+      paper.classList.add("love");
+
+      corazonesClick(e.clientX, e.clientY, 9);
+    });
+
+    document.addEventListener("pointermove", e => {
+      if (!opened) return;
+      if (window.innerWidth < 700) return;
+
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const x = (mouseX / window.innerWidth - 0.5) * 6;
+          const y = (mouseY / window.innerHeight - 0.5) * -6;
+          paper.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    });
+
+    crearLluviaCorazones();
+  </script>
+</body>
+</html>
